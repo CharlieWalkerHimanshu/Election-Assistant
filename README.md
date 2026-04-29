@@ -306,6 +306,7 @@ Connect GitHub repo to Vercel → auto-deploy on push to master.
 | 2 | Wizard UI | ✅ Done |
 | 3 | Docker + Cloud Run + Vercel config | ✅ Done |
 | 3 | GitHub Actions CI (backend + frontend + Docker) | ✅ Done |
+| 4 | Find My Voting Info (city/PIN lookup, 10 regions) | ✅ Done |
 
 ---
 

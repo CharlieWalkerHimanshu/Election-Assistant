@@ -33,3 +33,18 @@ export interface ChatApiResponse {
   success: boolean;
   reply: string;
 }
+
+export interface VotingInfoLink {
+  label: string;
+  url: string;
+}
+
+export interface VotingInfo {
+  region: string;
+  state: string;
+  pollingBoothFinderUrl: string;
+  stateElectionCommissionUrl: string;
+  voterHelpline: string;
+  additionalLinks: VotingInfoLink[];
+  tip: string;
+}

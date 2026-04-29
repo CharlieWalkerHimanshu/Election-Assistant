@@ -1,10 +1,11 @@
 export const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? '';
 
 export const ROUTES = {
-  HOME:     '/',
-  WIZARD:   '/wizard',
-  TIMELINE: '/timeline',
-  CHAT:     '/chat',
+  HOME:        '/',
+  WIZARD:      '/wizard',
+  TIMELINE:    '/timeline',
+  CHAT:        '/chat',
+  VOTING_INFO: '/voting-info',
 } as const;
 
 export const QUICK_QUESTIONS = [
@@ -19,5 +20,6 @@ export const NAV_LINKS = [
   { label: 'Home',         path: ROUTES.HOME },
   { label: 'Voting Guide', path: ROUTES.WIZARD },
   { label: 'Timeline',     path: ROUTES.TIMELINE },
+  { label: 'Find My Info', path: ROUTES.VOTING_INFO },
   { label: 'Ask AI',       path: ROUTES.CHAT },
 ] as const;

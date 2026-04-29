@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import WizardPage from './pages/WizardPage';
 import TimelinePage from './pages/TimelinePage';
 import ChatPage from './pages/ChatPage';
+import VotingInfoPage from './pages/VotingInfoPage';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
             <Route path={ROUTES.WIZARD}   element={<WizardPage />} />
             <Route path={ROUTES.TIMELINE} element={<TimelinePage />} />
             <Route path={ROUTES.CHAT}     element={<ChatPage />} />
+            <Route path={ROUTES.VOTING_INFO} element={<VotingInfoPage />} />
           </Routes>
         </main>
         <Footer />

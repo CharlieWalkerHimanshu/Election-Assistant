@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../utils/constants';
-import type { TimelinePhase, VotingStep, ChatApiResponse, ApiResponse } from '../types';
+import type { TimelinePhase, VotingStep, ChatApiResponse, ApiResponse, VotingInfo } from '../types';
 
 const client = axios.create({
   baseURL: API_BASE_URL,
@@ -23,4 +23,12 @@ export async function fetchVotingSteps(): Promise<VotingStep[]> {
 export async function sendChatMessage(message: string): Promise<string> {
   const { data } = await client.post<ChatApiResponse>('/api/chat', { message });
   return data.reply;
+}
+
+export async function fetchVotingInfo(query: string): Promise<VotingInfo> {
+  const { data } = await client.get<ApiResponse<VotingInfo>>('/api/voting-info', {
+    params: { query },
+  });
+  if (!data.data) throw new Error('No data returned');
+  return data.data;
 }
