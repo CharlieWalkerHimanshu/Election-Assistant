@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Focus ring for keyboard navigation */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-blue-600;
+  }
+}
+
+@layer components {
+  /* Reusable button styles */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600
+           px-6 py-3 text-sm font-semibold text-white shadow-sm
+           transition-all duration-200 hover:bg-emerald-700 hover:shadow-md
+           focus-visible:outline active:scale-95 disabled:cursor-not-allowed
+           disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border-2
+           border-white px-6 py-3 text-sm font-semibold text-white
+           transition-all duration-200 hover:bg-white hover:text-blue-900
+           focus-visible:outline active:scale-95;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border-2
+           border-blue-700 px-6 py-3 text-sm font-semibold text-blue-700
+           transition-all duration-200 hover:bg-blue-700 hover:text-white
+           focus-visible:outline active:scale-95;
+  }
+
+  /* Card base */
+  .card {
+    @apply rounded-2xl bg-white shadow-sm ring-1 ring-slate-200
+           transition-shadow duration-200 hover:shadow-md;
+  }
+}
