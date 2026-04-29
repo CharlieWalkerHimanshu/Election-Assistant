@@ -299,12 +299,13 @@ Connect GitHub repo to Vercel → auto-deploy on push to master.
 | 1 | AI Chat endpoint (POST /api/chat) | ✅ Done |
 | 1 | Voting Steps API (GET /api/voting-steps) | ✅ Done |
 | 1 | Election Timeline API (GET /api/timeline) | ✅ Done |
-| 2 | Frontend scaffold (Vite + React + Tailwind) | 🔜 Next |
-| 2 | Home Page UI | 🔜 |
-| 2 | AI Chat UI | 🔜 |
-| 2 | Timeline UI | 🔜 |
-| 2 | Wizard UI | 🔜 |
-| 3 | Docker + Cloud Run + Vercel config | 🔜 |
+| 2 | Frontend scaffold (Vite + React + Tailwind) | ✅ Done |
+| 2 | Home Page UI | ✅ Done |
+| 2 | AI Chat UI | ✅ Done |
+| 2 | Timeline UI | ✅ Done |
+| 2 | Wizard UI | ✅ Done |
+| 3 | Docker + Cloud Run + Vercel config | ✅ Done |
+| 3 | GitHub Actions CI (backend + frontend + Docker) | ✅ Done |
 
 ---
 
