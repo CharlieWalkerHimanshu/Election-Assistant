@@ -6,6 +6,7 @@ import 'dotenv/config';
 import { globalRateLimiter } from './middlewares/rateLimiter';
 import { errorHandler } from './middlewares/errorHandler';
 import healthRoutes from './routes/healthRoutes';
+import aiRoutes from './routes/aiRoutes';
 import { logger } from './utils/logger';
 
 export function createApp(): Application {
@@ -51,11 +52,7 @@ export function createApp(): Application {
 
   // ── Routes ────────────────────────────────────────────
   app.use('/api/health', healthRoutes);
-
-  // Placeholder routes – will be wired in subsequent phases
-  app.use('/api/ai', (_req, res) =>
-    res.status(501).json({ success: false, message: 'Not yet implemented' })
-  );
+  app.use('/api/ai', aiRoutes);
   app.use('/api/timeline', (_req, res) =>
     res.status(501).json({ success: false, message: 'Not yet implemented' })
   );

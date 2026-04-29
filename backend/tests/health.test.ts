@@ -29,10 +29,9 @@ describe('Unknown routes', () => {
 });
 
 describe('Placeholder routes', () => {
-  it('GET /api/ai returns 501 not implemented', async () => {
-    const res = await request(app).get('/api/ai');
-    expect(res.status).toBe(501);
-    expect(res.body.success).toBe(false);
+  it('GET /api/ai/unknown returns 404 (real router, no GET /chat)', async () => {
+    const res = await request(app).get('/api/ai/unknown');
+    expect(res.status).toBe(404);
   });
 
   it('GET /api/timeline returns 501 not implemented', async () => {
