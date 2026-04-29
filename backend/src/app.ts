@@ -7,6 +7,8 @@ import { globalRateLimiter } from './middlewares/rateLimiter';
 import { errorHandler } from './middlewares/errorHandler';
 import healthRoutes from './routes/healthRoutes';
 import aiRoutes from './routes/aiRoutes';
+import timelineRoutes from './routes/timelineRoutes';
+import wizardRoutes from './routes/wizardRoutes';
 import { logger } from './utils/logger';
 
 export function createApp(): Application {
@@ -52,13 +54,10 @@ export function createApp(): Application {
 
   // ── Routes ────────────────────────────────────────────
   app.use('/api/health', healthRoutes);
-  app.use('/api/ai', aiRoutes);
-  app.use('/api/timeline', (_req, res) =>
-    res.status(501).json({ success: false, message: 'Not yet implemented' })
-  );
-  app.use('/api/wizard', (_req, res) =>
-    res.status(501).json({ success: false, message: 'Not yet implemented' })
-  );
+  app.use('/api/ai', aiRoutes);           // POST /api/chat (alias below)
+  app.use('/api/chat', aiRoutes);         // POST /api/chat (user-friendly path)
+  app.use('/api/timeline', timelineRoutes);     // GET  /api/timeline
+  app.use('/api/voting-steps', wizardRoutes);   // GET  /api/voting-steps
 
   // ── 404 handler ───────────────────────────────────────
   app.use((_req: Request, res: Response) => {

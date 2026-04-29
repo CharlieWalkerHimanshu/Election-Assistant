@@ -1,50 +1,77 @@
-# Election Navigator
+# 🧭 Election Navigator – AI-Powered Voting Assistant
 
-> AI-powered assistant that guides users through election processes, timelines, and voting steps.
+> Making elections accessible — especially for first-time voters.
+
+Election Navigator is an AI-powered assistant that simplifies the election process by providing step-by-step voting guidance, interactive election timelines, and AI-powered Q&A support.
 
 ---
 
-## What It Does
+## 🚀 Overview
 
 | Module | Description |
 |---|---|
-| 🧭 **Guided Voting Wizard** | Decision-tree UI — eligibility → registration → polling booth → voting day |
-| 📅 **Election Timeline** | Interactive horizontal timeline with hover tooltips |
-| 🤖 **AI Chat Assistant** | LLM grounded with structured election data; not just raw GPT |
+| 🧭 **Guided Voting Flow** | Decision-tree wizard — eligibility → registration → polling booth → voting day |
+| 📅 **Election Timeline** | Interactive horizontal timeline with hover-to-expand details |
+| 🤖 **AI Assistant** | Context-aware Q&A grounded with structured election data |
+| 📍 **Location-based Info** | Find voting instructions by region _(optional, Phase 4)_ |
 
 ---
 
-## Tech Stack
+## ✨ Features
+
+### 🧭 Guided Voting Flow
+- Eligibility check ("Are you 18+? Are you a citizen?")
+- Registration steps with document checklist
+- Required documents list
+- Voting day instructions
+
+### 📅 Election Timeline
+- Registration phase
+- Campaign period
+- Voting days
+- Result declaration
+
+### 🤖 AI Assistant
+- Answers election-related queries in natural language
+- Context-aware responses using a structured knowledge base (never just raw GPT)
+- Fallback message for out-of-scope questions
+
+### 📍 Location-based Info _(Optional)_
+- Find voting-related instructions by city / PIN code
+
+---
+
+## 🏗️ Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | React + Vite + Tailwind CSS + TypeScript |
-| Backend | Node.js + Express + TypeScript |
-| AI | OpenAI `gpt-4o` |
-| Backend Deployment | Google Cloud Run (Docker) |
-| Frontend Deployment | Vercel |
+| **Frontend** | React (Vite) + Tailwind CSS + TypeScript |
+| **Backend** | Node.js + Express.js + TypeScript |
+| **AI** | OpenAI API (gpt-4o) |
+| **Backend Deployment** | Google Cloud Run (Docker) |
+| **Frontend Deployment** | Vercel |
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 election-navigator/
 ├── backend/
 │   ├── src/
-│   │   ├── app.ts                    # Express app factory
-│   │   ├── server.ts                 # Entry point + graceful shutdown
+│   │   ├── app.ts                      # Express app factory
+│   │   ├── server.ts                   # Entry point + graceful shutdown
 │   │   ├── controllers/
 │   │   │   ├── aiController.ts
 │   │   │   ├── timelineController.ts
 │   │   │   └── wizardController.ts
 │   │   ├── routes/
 │   │   │   ├── healthRoutes.ts
-│   │   │   ├── aiRoutes.ts
-│   │   │   ├── timelineRoutes.ts
-│   │   │   └── wizardRoutes.ts
+│   │   │   ├── aiRoutes.ts             # POST /api/chat
+│   │   │   ├── timelineRoutes.ts       # GET  /api/timeline
+│   │   │   └── wizardRoutes.ts         # GET  /api/voting-steps
 │   │   ├── services/
-│   │   │   ├── aiService.ts          # OpenAI integration
+│   │   │   ├── aiService.ts
 │   │   │   ├── timelineService.ts
 │   │   │   └── wizardService.ts
 │   │   ├── middlewares/
@@ -61,7 +88,21 @@ election-navigator/
 │   ├── .env.example
 │   ├── Dockerfile
 │   └── package.json
-├── frontend/                         # (Phase 2)
+├── frontend/                           # Phase 2 – React + Vite + Tailwind
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Chat/                   # AI Chat UI (WhatsApp-style bubbles)
+│   │   │   ├── Timeline/               # Horizontal timeline + hover cards
+│   │   │   └── Wizard/                 # Stepper UI with Next/Back
+│   │   ├── pages/
+│   │   │   ├── HomePage.tsx            # Hero + CTA buttons
+│   │   │   ├── WizardPage.tsx
+│   │   │   ├── TimelinePage.tsx
+│   │   │   └── ChatPage.tsx
+│   │   ├── hooks/
+│   │   ├── services/                   # API call wrappers
+│   │   └── utils/
+│   └── tailwind.config.ts
 ├── docker-compose.yml
 ├── ELECTION_NAVIGATOR_SPEC.md
 └── README.md
@@ -69,10 +110,59 @@ election-navigator/
 
 ---
 
-## Getting Started
+## 🔌 API Endpoints
+
+### Health Check
+```
+GET /api/health
+→ 200 { success: true, status: "ok", service: "election-navigator-api", timestamp }
+```
+
+### Voting Steps
+```
+GET /api/voting-steps
+
+Response:
+[
+  { "step": 1, "title": "Check Eligibility",  "description": "Must be 18+ and a citizen" },
+  { "step": 2, "title": "Register to Vote",   "description": "Fill Form 6 on voters.eci.gov.in" },
+  { "step": 3, "title": "Find Polling Booth", "description": "Use Voter ID or call 1950" },
+  { "step": 4, "title": "Voting Day",         "description": "Carry photo ID, vote on EVM" }
+]
+```
+
+### Election Timeline
+```
+GET /api/timeline
+GET /api/timeline?country=india    (default)
+
+Response:
+[
+  { "phase": "Registration", "date": "2026-04-01", "description": "Last date to register",     "icon": "📝" },
+  { "phase": "Campaign",     "date": "2026-04-15", "description": "Campaign period begins",    "icon": "📣" },
+  { "phase": "Voting",       "date": "2026-05-01", "description": "Polling day",               "icon": "🗳️" },
+  { "phase": "Results",      "date": "2026-05-04", "description": "Vote counting and results", "icon": "📊" }
+]
+```
+
+### AI Chat
+```
+POST /api/chat
+Content-Type: application/json
+
+Request:  { "message": "I don't have voter ID" }
+Response: { "success": true, "reply": "You can apply using Form 6..." }
+
+422 – validation error (empty / too long / missing field)
+429 – rate limit exceeded (20 req/min per IP on AI endpoint)
+503 – AI service temporarily unavailable
+```
+
+---
+
+## ⚙️ Getting Started
 
 ### Prerequisites
-
 - Node.js 20+
 - npm 10+
 - An [OpenAI API key](https://platform.openai.com/api-keys)
@@ -81,169 +171,143 @@ election-navigator/
 
 ```bash
 cd backend
-
-# 1. Install dependencies
 npm install
-
-# 2. Copy env file and fill in your values
-cp .env.example .env
-# → Edit .env and set OPENAI_API_KEY
-
-# 3. Start dev server (hot reload)
-npm run dev
-
-# Server runs at http://localhost:8080
+cp .env.example .env      # then set OPENAI_API_KEY in .env
+npm run dev               # → http://localhost:8080
 ```
 
 ### Environment Variables
 
-Copy `backend/.env.example` to `backend/.env` and configure:
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| PORT | No | 8080 | Server port |
+| NODE_ENV | No | development | Environment |
+| ALLOWED_ORIGINS | Yes | — | Comma-separated CORS origins |
+| OPENAI_API_KEY | **Yes** | — | Your OpenAI secret key |
+| OPENAI_MODEL | No | gpt-4o | Model to use |
+| AI_RATE_LIMIT_MAX | No | 20 | Max AI req/min per IP |
+| GLOBAL_RATE_LIMIT_MAX | No | 100 | Global rate limit per IP |
 
-| Variable | Required | Description |
-|---|---|---|
-| `PORT` | No | Server port (default: `8080`) |
-| `NODE_ENV` | No | `development` / `production` |
-| `ALLOWED_ORIGINS` | Yes | Comma-separated CORS origins |
-| `OPENAI_API_KEY` | **Yes** | Your OpenAI secret key |
-| `OPENAI_MODEL` | No | Model to use (default: `gpt-4o`) |
-| `AI_RATE_LIMIT_MAX` | No | Max AI requests/window per IP (default: `20`) |
-| `AI_RATE_LIMIT_WINDOW_MS` | No | Rate limit window in ms (default: `60000`) |
-| `GLOBAL_RATE_LIMIT_MAX` | No | Global rate limit per IP (default: `100`) |
-
-> **Never commit your `.env` file.** It is in `.gitignore`.
+> ⚠️ Never commit your .env file — it is listed in .gitignore.
 
 ---
 
-## API Reference
+## 🧪 Testing
 
-### Health
-
-```
-GET /api/health
-→ 200 { success: true, status: "ok", service: "election-navigator-api", timestamp }
-```
-
-### AI Chat
-
-```
-POST /api/ai/chat
-Content-Type: application/json
-
-{
-  "message": "How do I register to vote?"
-}
-
-→ 200 { success: true, reply: "..." }
-→ 422 Validation error
-→ 429 Rate limit exceeded
-→ 500 AI service error
-```
-
-### Election Timeline _(coming in Phase 3)_
-
-```
-GET /api/timeline
-GET /api/timeline?country=india
-```
-
-### Voting Wizard _(coming in Phase 4)_
-
-```
-POST /api/wizard
-{ "step": "eligibility", "answers": { "age": 19, "citizen": true } }
-```
-
----
-
-## Running Tests
+Backend: **Jest + Supertest** | Frontend: **React Testing Library** (Phase 2)
 
 ```bash
 cd backend
-npm test               # run all tests
-npm run test:coverage  # with coverage report
+npm test                # run all tests
+npm run test:coverage   # with coverage report
 ```
 
-**Current test results:**
+**Test coverage:**
 
 ```
-✓ GET /api/health → 200 ok
-✓ JSON content-type header
-✓ 404 for unknown routes
-✓ /api/ai placeholder → 501
-✓ /api/timeline placeholder → 501
-✓ /api/wizard placeholder → 501
-✓ helmet X-Content-Type-Options header
-✓ body > 10kb rejected
-✓ POST /api/ai/chat → 200 with mocked reply
-✓ rejects empty message
-✓ rejects message over 500 chars
-✓ handles OpenAI API failure gracefully
-✓ rate limiter headers present
+Health suite   ✓ 200 ok / JSON header / 404 / Helmet headers / 10kb limit
+AI Chat suite  ✓ 200 reply / 422 empty / 422 missing / 422 too-long / 503 failure / key not exposed / XSS sanitized
+Timeline suite ✓ 200 with phases / country filter / required fields on each phase
+Wizard suite   ✓ 200 with steps / required fields on each step
 ```
 
 ---
 
-## Docker (Local)
+## 🔐 Security
 
-```bash
-# From project root
-docker-compose up --build
-
-# API available at http://localhost:8080
-```
+- API keys in environment variables only — never in source code
+- Helmet HTTP security headers on every response
+- CORS restricted to an explicit origin allowlist
+- Rate limiting: 100 req/min global, 20 req/min on AI endpoint
+- Request body capped at 10 KB (payload attack prevention)
+- Input validation on all endpoints via express-validator
+- HTML escaping on AI input (XSS prevention)
+- Non-root Docker user in production image
 
 ---
 
-## Deployment
+## ♿ Accessibility
+
+- ARIA labels on all interactive elements
+- Full keyboard navigation support
+- Color contrast compliance (WCAG AA)
+- Screen-reader friendly step indicators in Wizard
+
+---
+
+## 🚀 Deployment
 
 ### Backend → Google Cloud Run
 
 ```bash
-cd backend
-
-# Build and push image
 gcloud builds submit --tag gcr.io/YOUR_PROJECT/election-navigator-api
 
-# Deploy
 gcloud run deploy election-navigator-api \
   --image gcr.io/YOUR_PROJECT/election-navigator-api \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-env-vars OPENAI_API_KEY=$$OPENAI_API_KEY,ALLOWED_ORIGINS=https://your-frontend.vercel.app
+  --set-env-vars OPENAI_API_KEY=$OPENAI_API_KEY,ALLOWED_ORIGINS=https://your-app.vercel.app
 ```
 
 ### Frontend → Vercel _(Phase 2)_
 
-```bash
-cd frontend
-vercel deploy
-```
+Connect GitHub repo to Vercel → auto-deploy on push to master.
 
 ---
 
-## Security
+## 🖼️ UI Plan (Phase 2)
 
-- API keys stored in environment variables only
-- Helmet sets security headers on every response
-- CORS restricted to explicit allowlist
-- Rate limiting: 100 req/min global, 20 req/min on AI endpoint
-- Request body capped at 10 KB
-- Input validation on all endpoints via `express-validator`
-- Non-root Docker user
+### 🏠 Home Page
+- Hero section with tagline
+- "Start Voting Guide" CTA button
+- "Ask AI" quick access section
+
+### 🧭 Voting Flow Page
+- Stepper UI (step indicators at top)
+- Dynamic step content area
+- Next / Back navigation buttons
+
+### 📅 Timeline Page
+- Horizontal scrollable timeline
+- Hover → detail card expands
+- Clean phase cards (Registration, Campaign, Voting, Results)
+
+### 🤖 AI Chat Page
+- WhatsApp-style chat bubbles
+- Input box + send button
+- Typing indicator while AI responds
+- Suggested quick questions
 
 ---
 
-## Build Progress
+## 📌 Future Improvements
+
+- Multi-language support (Hindi, Tamil, Bengali, etc.)
+- Real-time election data from ECI API
+- User personalization and saved preferences
+- SMS / WhatsApp chatbot integration
+- PWA (offline-capable mobile app)
+
+---
+
+## 📊 Build Progress
 
 | Phase | Feature | Status |
 |---|---|---|
-| 1 | Backend scaffolding | ✅ Done |
-| 1 | AI Chat endpoint | ✅ Done |
-| 2 | Election Timeline API | 🔜 Next |
-| 3 | Voting Wizard API | 🔜 |
-| 4 | Frontend (Vite + React + Tailwind) | 🔜 |
-| 5 | Chat UI | 🔜 |
-| 6 | Timeline UI | 🔜 |
-| 7 | Wizard UI | 🔜 |
-| 8 | Docker + Cloud Run + Vercel config | 🔜 |
+| 1 | Backend scaffolding (Express, TS, middleware, Docker) | ✅ Done |
+| 1 | AI Chat endpoint (POST /api/chat) | ✅ Done |
+| 1 | Voting Steps API (GET /api/voting-steps) | ✅ Done |
+| 1 | Election Timeline API (GET /api/timeline) | ✅ Done |
+| 2 | Frontend scaffold (Vite + React + Tailwind) | 🔜 Next |
+| 2 | Home Page UI | 🔜 |
+| 2 | AI Chat UI | 🔜 |
+| 2 | Timeline UI | 🔜 |
+| 2 | Wizard UI | 🔜 |
+| 3 | Docker + Cloud Run + Vercel config | 🔜 |
+
+---
+
+## 👨‍💻 Author
+
+Built for the Election Navigator project — AI-powered civic tech.

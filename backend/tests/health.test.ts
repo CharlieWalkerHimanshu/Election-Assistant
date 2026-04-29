@@ -34,16 +34,16 @@ describe('Placeholder routes', () => {
     expect(res.status).toBe(404);
   });
 
-  it('GET /api/timeline returns 501 not implemented', async () => {
+  it('GET /api/timeline returns 200 (real route now active)', async () => {
     const res = await request(app).get('/api/timeline');
-    expect(res.status).toBe(501);
-    expect(res.body.success).toBe(false);
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
   });
 
-  it('GET /api/wizard returns 501 not implemented', async () => {
-    const res = await request(app).get('/api/wizard');
-    expect(res.status).toBe(501);
-    expect(res.body.success).toBe(false);
+  it('GET /api/voting-steps returns 200 (real route now active)', async () => {
+    const res = await request(app).get('/api/voting-steps');
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
   });
 });
 
