@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { logger } from '../utils/logger';
 
 // ── Structured election knowledge injected into every conversation ──────────
@@ -52,17 +52,17 @@ Be concise, clear, and actionable. Use numbered lists for step-by-step instructi
 `.trim();
 
 // Lazy-initialize client so missing key only throws at call time, not import
-let openaiClient: OpenAI | null = null;
+let geminiClient: GoogleGenerativeAI | null = null;
 
-function getClient(): OpenAI {
-  if (!openaiClient) {
-    const apiKey = process.env.OPENAI_API_KEY;
+function getClient(): GoogleGenerativeAI {
+  if (!geminiClient) {
+    const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
-      throw new Error('OPENAI_API_KEY environment variable is not set.');
+      throw new Error('GOOGLE_API_KEY environment variable is not set.');
     }
-    openaiClient = new OpenAI({ apiKey });
+    geminiClient = new GoogleGenerativeAI(apiKey);
   }
-  return openaiClient;
+  return geminiClient;
 }
 
 export interface ChatResult {
@@ -70,43 +70,31 @@ export interface ChatResult {
 }
 
 /**
- * Send a user message to OpenAI with the election system prompt.
+ * Send a user message to Gemini with the election system prompt.
  * The AI is grounded with structured knowledge — it does not free-form hallucinate.
  */
 export async function getChatReply(userMessage: string): Promise<ChatResult> {
-  const model = process.env.OPENAI_MODEL ?? 'gpt-4o';
+  const modelName = process.env.GEMINI_MODEL ?? 'gemini-1.5-flash';
 
-  logger.debug(`AI request: model=${model}, message length=${userMessage.length}`);
+  logger.debug(`AI request: model=${modelName}, message length=${userMessage.length}`);
 
   try {
-    const completion = await getClient().chat.completions.create({
-      model,
-      messages: [
-        { role: 'system', content: ELECTION_SYSTEM_PROMPT },
-        { role: 'user', content: userMessage },
-      ],
-      max_tokens: 600,
-      temperature: 0.3, // low temperature = more factual, less creative
+    const model = getClient().getGenerativeModel({
+      model: modelName,
+      systemInstruction: ELECTION_SYSTEM_PROMPT,
     });
 
-    const reply = completion.choices[0]?.message?.content?.trim();
+    const result = await model.generateContent(userMessage);
+    const reply = result.response.text()?.trim();
 
     if (!reply) {
-      throw new Error('Empty response from OpenAI.');
+      throw new Error('Empty response from Gemini.');
     }
 
     logger.debug(`AI response received (${reply.length} chars)`);
     return { reply };
   } catch (error: unknown) {
-    // Re-throw with a clean message; do NOT leak internal API error details to client.
-    // Check by name to stay compatible with Jest module mocks.
-    if (
-      error instanceof Error &&
-      (error.name === 'APIError' || error.constructor?.name === 'APIError')
-    ) {
-      logger.error(`OpenAI API error: ${error.message}`);
-      throw new Error('AI service is temporarily unavailable. Please try again shortly.');
-    }
-    throw error;
+    logger.error(`Gemini API error: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error('AI service is temporarily unavailable. Please try again shortly.');
   }
 }

@@ -21,7 +21,7 @@ export async function fetchVotingSteps(): Promise<VotingStep[]> {
 }
 
 export async function sendChatMessage(message: string): Promise<string> {
-  const { data } = await client.post<ChatApiResponse>('/api/chat', { message });
+  const { data } = await client.post<ChatApiResponse>('/api/ai/chat', { message });
   return data.reply;
 }
 
