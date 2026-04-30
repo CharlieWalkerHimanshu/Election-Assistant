@@ -47,8 +47,8 @@ Election Navigator is an AI-powered assistant that simplifies the election proce
 |---|---|
 | **Frontend** | React (Vite) + Tailwind CSS + TypeScript |
 | **Backend** | Node.js + Express.js + TypeScript |
-| **AI** | OpenAI API (gpt-4o) |
-| **Backend Deployment** | Google Cloud Run (Docker) |
+| **AI** | Google Gemini API (gemini-2.0-flash) |
+| **Backend Deployment** | Render (Docker, Free tier) |
 | **Frontend Deployment** | Vercel |
 
 ---
@@ -64,15 +64,18 @@ election-navigator/
 │   │   ├── controllers/
 │   │   │   ├── aiController.ts
 │   │   │   ├── timelineController.ts
+│   │   │   ├── votingInfoController.ts
 │   │   │   └── wizardController.ts
 │   │   ├── routes/
 │   │   │   ├── healthRoutes.ts
-│   │   │   ├── aiRoutes.ts             # POST /api/chat
+│   │   │   ├── aiRoutes.ts             # POST /api/ai/chat
 │   │   │   ├── timelineRoutes.ts       # GET  /api/timeline
+│   │   │   ├── votingInfoRoutes.ts     # GET  /api/voting-info
 │   │   │   └── wizardRoutes.ts         # GET  /api/voting-steps
 │   │   ├── services/
-│   │   │   ├── aiService.ts
+│   │   │   ├── aiService.ts            # Google Gemini integration
 │   │   │   ├── timelineService.ts
+│   │   │   ├── votingInfoService.ts
 │   │   │   └── wizardService.ts
 │   │   ├── middlewares/
 │   │   │   ├── errorHandler.ts
@@ -84,27 +87,30 @@ election-navigator/
 │   │   ├── health.test.ts
 │   │   ├── ai.test.ts
 │   │   ├── timeline.test.ts
+│   │   ├── votingInfo.test.ts
 │   │   └── wizard.test.ts
 │   ├── .env.example
 │   ├── Dockerfile
 │   └── package.json
-├── frontend/                           # Phase 2 – React + Vite + Tailwind
+├── frontend/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Chat/                   # AI Chat UI (WhatsApp-style bubbles)
+│   │   │   ├── Layout/                 # Navbar + Footer
 │   │   │   ├── Timeline/               # Horizontal timeline + hover cards
 │   │   │   └── Wizard/                 # Stepper UI with Next/Back
 │   │   ├── pages/
-│   │   │   ├── HomePage.tsx            # Hero + CTA buttons
+│   │   │   ├── HomePage.tsx
 │   │   │   ├── WizardPage.tsx
 │   │   │   ├── TimelinePage.tsx
+│   │   │   ├── VotingInfoPage.tsx
 │   │   │   └── ChatPage.tsx
 │   │   ├── hooks/
 │   │   ├── services/                   # API call wrappers
 │   │   └── utils/
+│   ├── vercel.json
 │   └── tailwind.config.ts
 ├── docker-compose.yml
-├── ELECTION_NAVIGATOR_SPEC.md
 └── README.md
 ```
 
@@ -165,14 +171,14 @@ Response: { "success": true, "reply": "You can apply using Form 6..." }
 ### Prerequisites
 - Node.js 20+
 - npm 10+
-- An [OpenAI API key](https://platform.openai.com/api-keys)
+- A [Google Gemini API key](https://aistudio.google.com/app/apikey)
 
 ### Backend Setup
 
 ```bash
 cd backend
 npm install
-cp .env.example .env      # then set OPENAI_API_KEY in .env
+cp .env.example .env      # then set GOOGLE_API_KEY in .env
 npm run dev               # → http://localhost:8080
 ```
 
@@ -183,8 +189,8 @@ npm run dev               # → http://localhost:8080
 | PORT | No | 8080 | Server port |
 | NODE_ENV | No | development | Environment |
 | ALLOWED_ORIGINS | Yes | — | Comma-separated CORS origins |
-| OPENAI_API_KEY | **Yes** | — | Your OpenAI secret key |
-| OPENAI_MODEL | No | gpt-4o | Model to use |
+| GOOGLE_API_KEY | **Yes** | — | Your Google Gemini API key |
+| GEMINI_MODEL | No | gemini-2.0-flash | Gemini model to use |
 | AI_RATE_LIMIT_MAX | No | 20 | Max AI req/min per IP |
 | GLOBAL_RATE_LIMIT_MAX | No | 100 | Global rate limit per IP |
 
@@ -237,22 +243,31 @@ Wizard suite   ✓ 200 with steps / required fields on each step
 
 ## 🚀 Deployment
 
-### Backend → Google Cloud Run
+### Backend → Render
 
-```bash
-gcloud builds submit --tag gcr.io/YOUR_PROJECT/election-navigator-api
+1. Connect GitHub repo at [render.com](https://render.com)
+2. Create a **Web Service** with:
+   - **Runtime:** Docker
+   - **Root Directory:** `backend`
+   - **Instance Type:** Free
+3. Add environment variables:
+   ```
+   NODE_ENV=production
+   GOOGLE_API_KEY=your_gemini_api_key
+   GEMINI_MODEL=gemini-2.0-flash
+   ALLOWED_ORIGINS=https://your-app.vercel.app
+   ```
+4. Render auto-deploys on every push to master.
 
-gcloud run deploy election-navigator-api \
-  --image gcr.io/YOUR_PROJECT/election-navigator-api \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --set-env-vars OPENAI_API_KEY=$OPENAI_API_KEY,ALLOWED_ORIGINS=https://your-app.vercel.app
-```
+### Frontend → Vercel
 
-### Frontend → Vercel _(Phase 2)_
-
-Connect GitHub repo to Vercel → auto-deploy on push to master.
+1. Connect GitHub repo at [vercel.com](https://vercel.com)
+2. Set **Root Directory** to `frontend`
+3. Add environment variable:
+   ```
+   VITE_API_URL=https://election-navigator-api.onrender.com
+   ```
+4. Vercel auto-deploys on every push to master.
 
 ---
 
@@ -304,9 +319,10 @@ Connect GitHub repo to Vercel → auto-deploy on push to master.
 | 2 | AI Chat UI | ✅ Done |
 | 2 | Timeline UI | ✅ Done |
 | 2 | Wizard UI | ✅ Done |
-| 3 | Docker + Cloud Run + Vercel config | ✅ Done |
-| 3 | GitHub Actions CI (backend + frontend + Docker) | ✅ Done |
+| 3 | Docker + Render + Vercel deployment | ✅ Done |
+| 3 | GitHub Actions CI (backend + frontend) | ✅ Done |
 | 4 | Find My Voting Info (city/PIN lookup, 10 regions) | ✅ Done |
+| 5 | Switched AI provider to Google Gemini | ✅ Done |
 
 ---
 
