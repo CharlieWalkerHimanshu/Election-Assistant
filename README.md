@@ -4,6 +4,24 @@
 
 Election Navigator is an AI-powered assistant that simplifies the election process by providing step-by-step voting guidance, interactive election timelines, and AI-powered Q&A support.
 
+🌐 **Live Demo:** [electionassistant.vercel.app](https://electionassistant.vercel.app)
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Home Page
+![Home Page](https://raw.githubusercontent.com/CharlieWalkerHimanshu/electionassistant/master/docs/screenshots/home.png)
+
+### 🤖 AI Chat
+![AI Chat](https://raw.githubusercontent.com/CharlieWalkerHimanshu/electionassistant/master/docs/screenshots/chat.png)
+
+### 🧭 Voting Guide Wizard
+![Wizard](https://raw.githubusercontent.com/CharlieWalkerHimanshu/electionassistant/master/docs/screenshots/wizard.png)
+
+### 📅 Election Timeline
+![Timeline](https://raw.githubusercontent.com/CharlieWalkerHimanshu/electionassistant/master/docs/screenshots/timeline.png)
+
 ---
 
 ## 🚀 Overview
@@ -19,25 +37,44 @@ Election Navigator is an AI-powered assistant that simplifies the election proce
 
 ## ✨ Features
 
-### 🧭 Guided Voting Flow
-- Eligibility check ("Are you 18+? Are you a citizen?")
-- Registration steps with document checklist
-- Required documents list
-- Voting day instructions
+- ✅ **AI-Powered Chat** — Ask anything about Indian elections, voter registration, polling booths
+- ✅ **Step-by-Step Voting Wizard** — Guided eligibility → registration → voting day flow
+- ✅ **Interactive Election Timeline** — Visual phases from registration to results
+- ✅ **Location-based Voting Info** — Find voting instructions by city or PIN code (10 regions)
+- ✅ **Mobile Responsive** — Works on all screen sizes
+- ✅ **Fast & Secure** — Rate limiting, CORS, Helmet headers, input validation
+- ✅ **Free to Run** — Deployed on Render (backend) + Vercel (frontend)
 
-### 📅 Election Timeline
-- Registration phase
-- Campaign period
-- Voting days
-- Result declaration
+---
 
-### 🤖 AI Assistant
-- Answers election-related queries in natural language
-- Context-aware responses using a structured knowledge base (never just raw GPT)
-- Fallback message for out-of-scope questions
+## ⚡ Quick Start
 
-### 📍 Location-based Info _(Optional)_
-- Find voting-related instructions by city / PIN code
+### 1. Clone the repo
+```bash
+git clone https://github.com/CharlieWalkerHimanshu/electionassistant.git
+cd electionassistant
+```
+
+### 2. Setup Backend
+```bash
+cd backend
+npm install
+cp .env.example .env
+# Edit .env and set your GOOGLE_API_KEY
+npm run dev        # → http://localhost:8080
+```
+
+### 3. Setup Frontend
+```bash
+cd frontend
+npm install
+# Create .env.local with:
+# VITE_API_URL=http://localhost:8080
+npm run dev        # → http://localhost:5173
+```
+
+### 4. Open in browser
+Visit **http://localhost:5173**
 
 ---
 
