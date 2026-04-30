@@ -8,23 +8,7 @@ Election Navigator is an AI-powered assistant that simplifies the election proce
 
 ---
 
-## 📸 Screenshots
-
-### 🏠 Home Page
-![Home Page](https://raw.githubusercontent.com/CharlieWalkerHimanshu/electionassistant/master/docs/screenshots/home.png)
-
-### 🤖 AI Chat
-![AI Chat](https://raw.githubusercontent.com/CharlieWalkerHimanshu/electionassistant/master/docs/screenshots/chat.png)
-
-### 🧭 Voting Guide Wizard
-![Wizard](https://raw.githubusercontent.com/CharlieWalkerHimanshu/electionassistant/master/docs/screenshots/wizard.png)
-
-### 📅 Election Timeline
-![Timeline](https://raw.githubusercontent.com/CharlieWalkerHimanshu/electionassistant/master/docs/screenshots/timeline.png)
-
----
-
-## 🚀 Overview
+##  Overview
 
 | Module | Description |
 |---|---|
